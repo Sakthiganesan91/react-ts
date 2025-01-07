@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { MouseEventHandler, useContext, useState } from "react";
 import AddExpense from "../components/AddExpense";
 import { expenseContext } from "../context/expenseContext";
+import Card from "../components/ui/Card";
 
 interface Expense {
   id: number;
@@ -16,7 +17,7 @@ interface defaultValues {
 type Action =
   | { type: "ADD"; payload: Expense }
   | { type: "EDIT"; payload: Expense }
-  | { type: "DELETE" };
+  | { type: "DELETE"; payload: Expense };
 
 interface context {
   state: defaultValues;
@@ -29,18 +30,23 @@ const Home = () => {
   const { state } = useContext<context>(expenseContext);
 
   const showExpenseAddTab = (): void => setShowTab(!showTab);
+
+  const closeTab = (): void => setShowTab(false);
   return (
     <div>
       <button onClick={showExpenseAddTab}>Add Expense +</button>
 
-      <AddExpense />
+      {showTab && <AddExpense closeTab={closeTab} />}
 
       {state.expenses.map((expense) => {
         return (
-          <div key={expense.id}>
-            <p>{expense.title}</p>
-            <p>{expense.amount}</p>
-          </div>
+          <Card
+            amount={expense.amount}
+            date={expense.date}
+            id={expense.id}
+            title={expense.title}
+            key={expense.id}
+          />
         );
       })}
     </div>

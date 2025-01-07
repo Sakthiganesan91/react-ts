@@ -15,7 +15,7 @@ interface defaultValues {
 type Action =
   | { type: "ADD"; payload: Expense }
   | { type: "EDIT"; payload: Expense }
-  | { type: "DELETE" };
+  | { type: "DELETE"; payload: Expense };
 
 const expenseDefaultValues: defaultValues = {
   totalAmount: 0,
@@ -37,10 +37,22 @@ export const authReducer = (
 ): defaultValues => {
   switch (action.type) {
     case "ADD":
-      console.log(state, action);
       return {
         totalAmount: action.payload.amount + state.totalAmount,
         expenses: [...state.expenses, action.payload],
+      };
+
+    case "DELETE":
+      const newExpenses = state.expenses.filter(
+        (expense) => expense.id != action.payload.id
+      );
+
+      state.expenses = newExpenses;
+      const balanceAmount = state.totalAmount - action.payload.amount;
+
+      return {
+        expenses: state.expenses,
+        totalAmount: balanceAmount,
       };
 
     default:

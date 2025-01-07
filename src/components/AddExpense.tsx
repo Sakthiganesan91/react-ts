@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { MouseEventHandler, useContext, useState } from "react";
 import Input from "./ui/Input";
 import { expenseContext } from "../context/expenseContext";
 
@@ -18,14 +18,18 @@ interface defaultValues {
 type Action =
   | { type: "ADD"; payload: Expense }
   | { type: "EDIT"; payload: Expense }
-  | { type: "DELETE" };
+  | { type: "DELETE"; payload: Expense };
 
 interface context {
   state: defaultValues;
   dispatch: React.Dispatch<Action>;
 }
 
-const AddExpense = () => {
+interface Props {
+  closeTab: () => void;
+}
+
+const AddExpense = ({ closeTab }: Props) => {
   const [title, setTitle] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
 
@@ -38,7 +42,7 @@ const AddExpense = () => {
       title,
       amount,
       date: new Date(),
-      id: Math.round(Math.random()),
+      id: Math.floor(Math.random() * 100000000) + 1,
     };
 
     dispatch({ type: "ADD", payload: expense });
@@ -83,6 +87,7 @@ const AddExpense = () => {
         ))}
 
         <button type="submit">Add Expense</button>
+        <button onClick={() => closeTab()}>Cancel</button>
       </form>
     </div>
   );
